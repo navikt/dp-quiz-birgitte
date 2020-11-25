@@ -23,6 +23,7 @@ internal class BirgitteTest {
 
         with(rapid.inspektør) {
             assertEquals(1, size)
+            assertNotNull(field(0, "@final"))
 
             field(0, "fakta").forEach {
                 assertNotNull(it["svar"])

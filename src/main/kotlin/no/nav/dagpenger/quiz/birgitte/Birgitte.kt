@@ -22,6 +22,7 @@ class Birgitte(rapidsConnection: RapidsConnection) : River.PacketListener {
             faktum.set<JsonNode>("svar", løsning)
         }
         packet["@event_name"] = "faktum_svar"
+        packet["@final"] = true
         context.send(packet.toJson())
     }
 }
