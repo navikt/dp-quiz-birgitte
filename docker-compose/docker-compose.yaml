@@ -1,0 +1,46 @@
+version: '3'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: wurstmeister/kafka:latest
+    hostname: kafka
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "9101:9101"
+    environment:
+      KAFKA_LISTENERS: kafka://:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: kafka:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: kafka
+      KAFKA_CREATE_TOPICS: "private-dagpenger-behov-v2:1:1"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  dp-quiz:
+    image: docker.pkg.github.com/navikt/dp-quiz/dp-quiz-api:latest
+    depends_on:
+      - kafka
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka://kafka:9092
+  dp-quizshow:
+    image: docker.pkg.github.com/navikt/dp-quizshow/dp-quizshow:latest
+    depends_on:
+      - dp-quiz
+    ports:
+      - "3000:3000"
+    environment:
+      BASE_PATH: /arbeid/dagpenger/quizshow
+      API_BASE_URL: http://dp-quiz:8080
+
+
