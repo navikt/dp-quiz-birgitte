@@ -33,6 +33,10 @@ spec:
   env:
     - name: PORT
       value: "8080"
+    - name: KAFKA_CONSUMER_GROUP_ID
+      value: dp-quiz-birgitte-v1
+    - name: KAFKA_RAPID_TOPIC
+      value: privat-dagpenger-behov-v2
   filesFrom:
     - secret: serviceuser-srvdp-quiz-birgitte
       mountPath: "/var/run/secrets/nais.io/service_user"

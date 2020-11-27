@@ -1,0 +1,86 @@
+name: Bygg og deploy ved push til master
+
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the master branch
+  push:
+    branches:
+      - master
+
+env:
+  IMAGE: docker.pkg.github.com/${{ github.repository }}/dp-quiz-birgitte:${{ github.sha }}
+  LATEST_IMAGE: docker.pkg.github.com/${{ github.repository }}/dp-quiz-birgitte:latest
+
+jobs:
+  build:
+    name: Build and publish Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '14.x'
+
+      - name: Setup gradle dependency cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', 'buildSrc/src/main/kotlin/Constants.kt') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Build with Gradle
+        run: ./gradlew build --info
+
+      - name: Login to GitHub Package Repository
+        uses: docker/login-action@v1
+        with:
+          registry: docker.pkg.github.com
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        env:
+          DOCKER_BUILDKIT: 1
+        run: |
+          docker build -t ${{ env.IMAGE }} -t ${{ env.LATEST_IMAGE }}
+          docker push ${{ env.IMAGE }}
+          docker push ${{ env.LATEST_IMAGE }}
+
+      - name: Archive NAIS yaml
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v1
+        with:
+          name: nais-yaml
+          path: nais
+
+  deploy_to_dev:
+    name: Deploy to dev
+    needs: build
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      -   uses: actions/checkout@v1
+      -   uses: nais/deploy/actions/deploy@v1
+          env:
+            APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+            CLUSTER: dev-gcp
+            RESOURCE: nais/dev/nais.yaml
+
+  deploy_to_prod:
+    name: Deploy to prod
+    needs: [build, deploy_to_dev]
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      -  uses: actions/checkout@v1
+      -  uses: nais/deploy/actions/deploy@v1
+         env:
+           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+           CLUSTER: prod-gcp
+           RESOURCE: nais/prod/nais.yaml
