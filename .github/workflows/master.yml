@@ -48,7 +48,7 @@ jobs:
         env:
           DOCKER_BUILDKIT: 1
         run: |
-          docker build -t ${{ env.IMAGE }} -t ${{ env.LATEST_IMAGE }}
+          docker build . -t ${{ env.IMAGE }} -t ${{ env.LATEST_IMAGE }}
           docker push ${{ env.IMAGE }}
           docker push ${{ env.LATEST_IMAGE }}
 
