@@ -30,6 +30,8 @@ spec:
     requests:
       cpu: 300m
       memory: 512Mi
+  secureLogs:
+    enabled: true
   env:
     - name: PORT
       value: "8080"
