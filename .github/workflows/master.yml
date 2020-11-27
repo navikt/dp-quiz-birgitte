@@ -5,7 +5,7 @@ on:
   # but only for the master branch
   push:
     branches:
-      - master
+      - main
 
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/dp-quiz-birgitte:${{ github.sha }}
