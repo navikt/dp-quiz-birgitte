@@ -17,7 +17,7 @@ class Birgitte(rapidsConnection: RapidsConnection) : River.PacketListener {
     }
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
-        packet["@løsning"].fields().forEach { (behov, løsning)->
+        packet["@løsning"].fields().forEach { (behov, løsning) ->
             val faktum = packet["fakta"].find { faktum -> faktum["behov"].asText() == behov } as ObjectNode
             faktum.set<JsonNode>("svar", løsning)
         }

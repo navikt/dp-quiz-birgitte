@@ -46,7 +46,8 @@ internal class BirgitteTest {
 }
 
 @Language("json")
-private val løstBehovJson = """
+private val løstBehovJson =
+    """
 {
   "@event_name": "behov",
   "@opprettet": "2020-11-18T11:04:32.867824",
@@ -70,10 +71,12 @@ private val løstBehovJson = """
     "Fødselsdato": "1998-11-01"
   },
   "Søknadstidspunkt": "2020-11-09"
-}""".trimIndent()
+}
+    """.trimIndent()
 
 @Language("json")
-private val løstBehovMedKompleksLøsningJson = """
+private val løstBehovMedKompleksLøsningJson =
+    """
 {
   "@event_name": "behov",
   "@opprettet": "2020-11-18T11:04:32.867824",
@@ -95,4 +98,5 @@ private val løstBehovMedKompleksLøsningJson = """
     }
   },
   "Søknadstidspunkt": "2020-11-09"
-}""".trimIndent()
+}
+    """.trimIndent()

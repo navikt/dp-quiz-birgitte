@@ -2,6 +2,7 @@ plugins {
     application
     id(Shadow.shadow) version Shadow.version
     kotlin("jvm") version "1.4.20"
+    id(Spotless.spotless) version Spotless.version
 }
 
 repositories {
@@ -10,7 +11,7 @@ repositories {
 }
 
 application {
-    mainClass.set("no.nav.dagpenger.quiz.birgitte.AppKt")
+    mainClassName = "no.nav.dagpenger.quiz.birgitte.AppKt"
 }
 
 dependencies {
@@ -21,6 +22,16 @@ dependencies {
     testImplementation(Mockk.mockk)
     testImplementation(Junit5.engine)
     testImplementation(Junit5.api)
+}
+
+spotless {
+    kotlin {
+        ktlint(Ktlint.version)
+    }
+    kotlinGradle {
+        target("*.gradle.kts", "buildSrc/**/*.kt*")
+        ktlint(Ktlint.version)
+    }
 }
 
 tasks.test {
