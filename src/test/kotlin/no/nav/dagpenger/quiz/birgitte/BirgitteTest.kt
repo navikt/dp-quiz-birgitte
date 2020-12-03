@@ -72,7 +72,7 @@ internal class BirgitteTest {
 private val løstBehovJson =
     """
 {
-  "@event_name": "behov",
+  "@event_name": "faktum_svar",
   "@opprettet": "2020-11-18T11:04:32.867824",
   "@id": "930e2beb-d394-4024-b713-dbeb6ad3d4bf",
   "fnr": "123",
@@ -105,7 +105,7 @@ private val løstBehovJson =
 private val løstBehovMedKompleksLøsningJson =
     """
 {
-  "@event_name": "behov",
+  "@event_name": "faktum_svar",
   "@opprettet": "2020-11-18T11:04:32.867824",
   "@id": "930e2beb-d394-4024-b713-dbeb6ad3d4bf",
   "fnr": "123",
@@ -133,7 +133,7 @@ private val løstBehovMedKompleksLøsningJson =
 @Language("json")
 private val løstBehovMedGeneratorFaktum =
     """{
-  "@event_name": "behov",
+  "@event_name": "faktum_svar",
   "@opprettet": "2020-11-18T11:04:32.867824",
   "@id": "930e2beb-d394-4024-b713-dbeb6ad3d4bf",
   "fnr": "123",
