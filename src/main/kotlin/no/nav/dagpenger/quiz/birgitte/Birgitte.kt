@@ -1,7 +1,9 @@
 package no.nav.dagpenger.quiz.birgitte
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -29,9 +31,24 @@ class Birgitte(rapidsConnection: RapidsConnection) : River.PacketListener {
         loggBehov(packet)
         packet["@løsning"].fields().forEach { (behov, løsning) ->
             val faktum = packet["fakta"].find { faktum -> faktum["behov"].asText() == behov } as ObjectNode
-            faktum.set<JsonNode>("svar", løsning)
+            when (faktum["clazz"].asText()) {
+                "generator" -> {
+                    val svar = jacksonObjectMapper().createArrayNode()
+                    løsning.forEach { enLøsning ->
+                        faktum["templates"].deepCopy<ArrayNode>().also { templates ->
+                            enLøsning.fields().forEach { (key, value) ->
+                                val faktum = templates.find { it["navn"].asText() == key } as ObjectNode
+                                faktum.set<JsonNode>("svar", value)
+                            }
+                        }.also {
+                            svar.add(it)
+                        }
+                    }
+                    faktum.set<JsonNode>("svar", svar)
+                }
+                else -> faktum.set<JsonNode>("svar", løsning)
+            }
         }
-        packet["@event_name"] = "faktum_svar"
         packet["@final"] = true
         context.send(packet.toJson())
     }
