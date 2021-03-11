@@ -15,7 +15,7 @@ application {
 }
 
 dependencies {
-    implementation("com.github.navikt:rapids-and-rivers:1.9ea2f5e")
+    implementation(RapidAndRivers)
 
     implementation(Kotlin.Logging.kotlinLogging)
 

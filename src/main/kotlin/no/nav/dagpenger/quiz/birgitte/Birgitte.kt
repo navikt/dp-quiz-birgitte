@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.asLocalDateTime
@@ -27,7 +28,7 @@ class Birgitte(rapidsConnection: RapidsConnection) : River.PacketListener {
         private val sikkerLogg = KotlinLogging.logger("tjenestekall")
     }
 
-    override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
+    override fun onPacket(packet: JsonMessage, context: MessageContext) {
         loggBehov(packet)
         packet["@løsning"].fields().forEach { (behov, løsning) ->
             val faktum = packet["fakta"].find { faktum -> faktum["behov"].asText() == behov } as ObjectNode
@@ -50,7 +51,7 @@ class Birgitte(rapidsConnection: RapidsConnection) : River.PacketListener {
             }
         }
         packet["@final"] = true
-        context.send(packet.toJson())
+        context.publish(packet.toJson())
     }
 
     private fun loggBehov(packet: JsonMessage) {
