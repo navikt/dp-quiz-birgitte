@@ -16,7 +16,7 @@ application {
 
 dependencies {
     implementation(RapidAndRivers)
-
+    implementation(Konfig.konfig)
     implementation(Kotlin.Logging.kotlinLogging)
 
     testImplementation(Mockk.mockk)
