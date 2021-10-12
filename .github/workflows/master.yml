@@ -8,8 +8,7 @@ on:
       - main
 
 env:
-  IMAGE: docker.pkg.github.com/${{ github.repository }}/dp-quiz-birgitte:${{ github.sha }}
-  LATEST_IMAGE: docker.pkg.github.com/${{ github.repository }}/dp-quiz-birgitte:latest
+  IMAGE: ghcr.io/${{ github.repository }}/dp-quiz-birgitte:${{ github.sha }}
 
 jobs:
   build:
@@ -37,20 +36,26 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build --info
 
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
       - name: Login to GitHub Package Repository
         uses: docker/login-action@v1
         with:
-          registry: docker.pkg.github.com
+          registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
-        env:
-          DOCKER_BUILDKIT: 1
-        run: |
-          docker build . -t ${{ env.IMAGE }} -t ${{ env.LATEST_IMAGE }}
-          docker push ${{ env.IMAGE }}
-          docker push ${{ env.LATEST_IMAGE }}
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          tags: ${{ env.IMAGE }}
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Archive NAIS yaml
         if: github.ref == 'refs/heads/main'
