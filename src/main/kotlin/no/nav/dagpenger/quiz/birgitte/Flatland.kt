@@ -52,7 +52,6 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
                     }
                 }
         }
-
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
@@ -62,7 +61,6 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
             else -> behovUtenLøsning[id]?.also { it.second.kombinerLøsninger(packet) }
         }
     }
-
 
     private fun sendUfullstendigBehovEvent(pair: Pair<MessageContext, JsonMessage>) {
 
@@ -89,7 +87,6 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
             ).toJson()
         )
     }
-
 
     private fun JsonMessage.erKomplett(): Boolean = this.forventninger().all { it in this.løsninger() }
 

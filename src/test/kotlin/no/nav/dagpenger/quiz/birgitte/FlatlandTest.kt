@@ -5,12 +5,13 @@ import kotlinx.coroutines.runBlocking
 import no.nav.helse.rapids_rivers.asLocalDateTime
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.intellij.lang.annotations.Language
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
-
 
 internal class FlatlandTest {
 
@@ -18,7 +19,6 @@ internal class FlatlandTest {
     private val rapid: TestRapid = TestRapid().apply {
         Flatland(rapidsConnection = this, delay = delay)
     }
-
 
     @BeforeEach
     fun setup() {
