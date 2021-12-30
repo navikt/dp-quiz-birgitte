@@ -38,9 +38,9 @@ internal class FlatlandTest {
         val rapid: TestRapid = TestRapid().apply {
             Flatland(rapidsConnection = this, delay = delay)
         }
-        rapid.sendTestMessage(uLøsteBehovJson(opprettet = LocalDateTime.now().minusHours(1))) // Manipulate time to trigger 30 minute threshold
         rapid.sendTestMessage(løstBehovJson)
-        delay(200)
+        rapid.sendTestMessage(uLøsteBehovJson(opprettet = LocalDateTime.now().minusHours(1))) // Manipulate time to trigger 30 minute threshold
+        delay(1000)
         with(rapid.inspektør) {
             assertEquals(1, size)
         }
