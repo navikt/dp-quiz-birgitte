@@ -62,7 +62,7 @@ class Birgitte(rapidsConnection: RapidsConnection) : River.PacketListener {
             listOf(log, sikkerLogg).forEach { logger ->
                 logger.info {
                     val løsninger = packet["@løsning"].fieldNames().asSequence().joinToString(", ")
-                    "Mottok løsning for $løsninger"
+                    "Mottok løsning for $løsninger for søknad ${packet["søknad_uuid"].asText()}"
                 }
             }
         }

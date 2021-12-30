@@ -8,7 +8,6 @@ import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
@@ -16,17 +15,11 @@ import java.util.concurrent.TimeUnit
 internal class FlatlandTest {
 
     private val delay = Delay(1, 1, TimeUnit.MILLISECONDS)
-    private val rapid: TestRapid = TestRapid().apply {
-        Flatland(rapidsConnection = this, delay = delay)
-    }
-
-    @BeforeEach
-    fun setup() {
-        rapid.reset()
-    }
-
     @Test
     fun `skal varsle om uløste behov`() = runBlocking {
+        val rapid: TestRapid = TestRapid().apply {
+            Flatland(rapidsConnection = this, delay = delay)
+        }
         rapid.sendTestMessage(uLøsteBehovJson(opprettet = LocalDateTime.now().minusHours(1))) // Manipulate time to trigger 30 minute threshold
         delay(100)
         with(rapid.inspektør) {
@@ -42,6 +35,9 @@ internal class FlatlandTest {
 
     @Test
     fun `skal ikke varsle om løste behov`() = runBlocking {
+        val rapid: TestRapid = TestRapid().apply {
+            Flatland(rapidsConnection = this, delay = delay)
+        }
         rapid.sendTestMessage(uLøsteBehovJson(opprettet = LocalDateTime.now().minusHours(1))) // Manipulate time to trigger 30 minute threshold
         rapid.sendTestMessage(løstBehovJson)
         delay(200)
