@@ -1,7 +1,11 @@
 package no.nav.dagpenger.quiz.birgitte
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -9,6 +13,7 @@ import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.asLocalDateTime
+import no.nav.helse.rapids_rivers.isMissingOrNull
 import java.time.LocalDateTime
 import java.util.UUID
 import java.util.concurrent.TimeUnit
@@ -23,6 +28,10 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
     private companion object {
         val log = KotlinLogging.logger { }
         val sikkerLogg = KotlinLogging.logger("tjenestekall")
+        val objectMapper = jacksonObjectMapper()
+            .registerModule(JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
     }
 
     private val behovUtenLøsning = mutableMapOf<String, Pair<MessageContext, JsonMessage>>()
@@ -95,7 +104,13 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
     private fun JsonMessage.løsninger(): List<String> = this["@løsning"].fieldNames().asSequence().toList()
 
     private fun JsonMessage.kombinerLøsninger(packet: JsonMessage) {
+
+        if (this["@løsning"].isMissingOrNull()) {
+            this["@løsning"] = objectMapper.createObjectNode()
+        }
+
         val løsning = this["@løsning"] as ObjectNode
+
         packet["@løsning"].fields().forEach { (behovtype, delløsning) ->
             løsning.set<JsonNode>(behovtype, delløsning)
         }
