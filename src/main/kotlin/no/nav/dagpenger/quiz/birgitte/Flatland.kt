@@ -79,6 +79,7 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
         val mangler = forventninger.minus(løsninger)
         loggUfullstendingBehov(behov, mangler)
         val behovId = behov["@id"].asText()
+        val søknadUUID = behov["søknad_uuid"].asText()
         context.publish(
             behovId,
             JsonMessage.newMessage(
@@ -87,6 +88,7 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
                     "@id" to UUID.randomUUID(),
                     "@opprettet" to LocalDateTime.now(),
                     "behov_id" to behovId,
+                    "søknad_uuid" to søknadUUID,
                     "behov_opprettet" to behov["@opprettet"].asLocalDateTime(),
                     "forventet" to forventninger,
                     "løsninger" to løsninger,
