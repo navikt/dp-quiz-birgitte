@@ -73,12 +73,12 @@ private val løstBehovJson =
     {
       "id": "666",
       "behov": "Registreringsdato",
-      "clazz": "localdate"
+      "type": "localdate"
     },
     {
       "id": "777",
       "behov": "Fødselsdato",
-      "clazz": "localdate"
+      "type": "localdate"
     }
   ],
   "@behov": [
@@ -106,12 +106,12 @@ private fun uLøsteBehovJson(opprettet: LocalDateTime) =
     {
       "id": "666",
       "behov": "Registreringsdato",
-      "clazz": "localdate"
+      "type": "localdate"
     },
     {
       "id": "777",
       "behov": "Fødselsdato",
-      "clazz": "localdate"
+      "type": "localdate"
     }
   ],
   "@behov": [
@@ -138,12 +138,12 @@ private fun ingenLøsteBehov(opprettet: LocalDateTime) =
     {
       "id": "666",
       "behov": "Registreringsdato",
-      "clazz": "localdate"
+      "type": "localdate"
     },
     {
       "id": "777",
       "behov": "Fødselsdato",
-      "clazz": "localdate"
+      "type": "localdate"
     }
   ],
   "@behov": [

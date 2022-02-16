@@ -60,7 +60,7 @@ internal class BirgitteTest {
                     svar.forEach { faktum ->
                         assertTrue(faktum.has("id"))
                         assertTrue(faktum.has("svar"))
-                        assertTrue(faktum.has("clazz"))
+                        assertTrue(faktum.has("type"))
                     }
                 }
             }
@@ -81,12 +81,12 @@ private val løstBehovJson =
     {
       "id": "666",
       "behov": "Registreringsdato",
-      "clazz": "localdate"
+      "type": "localdate"
     },
     {
       "id": "777",
       "behov": "Fødselsdato",
-      "clazz": "localdate"
+      "type": "localdate"
     }
   ],
   "@behov": [
@@ -114,7 +114,7 @@ private val løstBehovMedKompleksLøsningJson =
     {
        "id": "10",
       "behov": "komplekst",
-      "clazz": "localdate"
+      "type": "localdate"
     }
   ],
   "@behov": [
@@ -142,17 +142,17 @@ private val løstBehovMedGeneratorFaktum =
     {
       "id": "10",
       "behov": "Registreringsperioder",
-      "clazz": "generator",
+      "type": "generator",
       "templates": [
         {
           "id": "11",
           "navn": "fom",
-          "clazz": "localdate"
+          "type": "localdate"
         },
         {
           "id": "12",
           "navn": "tom",
-          "clazz": "localdate"
+          "type": "localdate"
         }
       ]
     }

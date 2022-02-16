@@ -32,14 +32,14 @@ class Birgitte(rapidsConnection: RapidsConnection) : River.PacketListener {
         loggBehov(packet)
         packet["@løsning"].fields().forEach { (behov, løsning) ->
             val faktum = packet["fakta"].find { faktum -> faktum["behov"].asText() == behov } as ObjectNode
-            when (faktum["clazz"].asText()) {
+            when (faktum["type"].asText()) {
                 "generator" -> {
                     val svar = jacksonObjectMapper().createArrayNode()
                     løsning.forEach { enLøsning ->
                         faktum["templates"].deepCopy<ArrayNode>().also { templates ->
                             enLøsning.fields().forEach { (key, value) ->
-                                val faktum = templates.find { it["navn"].asText() == key } as ObjectNode
-                                faktum.set<JsonNode>("svar", value)
+                                val matchendeFaktum = templates.find { it["navn"].asText() == key } as ObjectNode
+                                matchendeFaktum.set<JsonNode>("svar", value)
                             }
                         }.also {
                             svar.add(it)
