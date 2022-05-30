@@ -24,7 +24,8 @@ internal class Delay(private val initalDelay: Long, private val period: Long, pr
     fun period() = timeUnit.toMillis(period)
 }
 
-internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay(1, 15, TimeUnit.MINUTES)) : River.PacketListener {
+internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay(1, 15, TimeUnit.MINUTES)) :
+    River.PacketListener {
     private companion object {
         val log = KotlinLogging.logger { }
         val sikkerLogg = KotlinLogging.logger("tjenestekall")
@@ -45,7 +46,8 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
         }.register(this)
 
         fixedRateTimer(initialDelay = delay.initalDelay(), period = delay.period()) {
-            val komplette = behovUtenLøsning.iterator().asSequence().toList().filter { it.value.second.erKomplett() }.map { it.key }
+            val komplette =
+                behovUtenLøsning.iterator().asSequence().toList().filter { it.value.second.erKomplett() }.map { it.key }
             komplette.forEach {
                 behovUtenLøsning.remove(it)
             }
@@ -125,17 +127,15 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
             "behovId" to packet["@id"].asText(),
             "søknad_uuid" to packet["søknad_uuid"].asText()
         ) {
-            listOf(log, sikkerLogg).forEach { logger ->
-                logger.info {
-                    val løsninger = packet["@løsning"].fieldNames().asSequence().toList()
-                    val behov = packet["@behov"].map(JsonNode::asText)
-                    val mangler = behov.minus(løsninger)
-                    val melding = "Har løsninger for [${løsninger.joinToString(", \n\t", "\n\t", "\n")}]. "
+            val løsninger = packet["@løsning"].fieldNames().asSequence().toSet()
+            val behov = packet["@behov"].map(JsonNode::asText)
+            val mangler = behov.minus(løsninger)
+            val melding = "Har løsninger for [${løsninger.joinToString(", \n\t", "\n\t", "\n")}]. "
 
-                    if (mangler.isEmpty()) return@info "Ferdig! $melding"
-
-                    melding + "Venter på løsninger for [${mangler.joinToString(", \n\t", "\n\t", "\n")}]"
-                }
+            if (mangler.isEmpty()) {
+                log.info { "Ferdig! $melding" }
+            } else {
+                log.info { melding + "Venter på løsninger for [${mangler.joinToString(", \n\t", "\n\t", "\n")}]" }
             }
         }
     }
