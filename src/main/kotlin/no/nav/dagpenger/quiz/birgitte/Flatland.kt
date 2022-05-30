@@ -40,7 +40,6 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
 
     init {
         River(rapidsConnection).apply {
-            validate { it.forbid("@final") }
             validate { it.requireKey("@id", "@behov", "fakta") }
             validate { it.require("@opprettet", JsonNode::asLocalDateTime) }
             validate { it.interestedIn("søknad_uuid", "@løsning") }
