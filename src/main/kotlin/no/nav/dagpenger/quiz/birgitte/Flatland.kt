@@ -40,9 +40,9 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
     init {
         River(rapidsConnection).apply {
             validate { it.forbid("@final") }
-            validate { it.requireKey("@behovId", "@behov", "fakta") }
+            validate { it.requireKey("@behovId", "@behov") }
             validate { it.require("@opprettet", JsonNode::asLocalDateTime) }
-            validate { it.interestedIn("søknad_uuid", "@løsning") }
+            validate { it.interestedIn("@løsning") }
         }.register(this)
 
         fixedRateTimer(initialDelay = delay.initalDelay(), period = delay.period()) {
@@ -81,7 +81,6 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
         val mangler = forventninger.minus(løsninger)
         loggUfullstendingBehov(behov, mangler)
         val behovId = behov["@behovId"].asText()
-        val søknadUUID = behov["søknad_uuid"].asText()
         context.publish(
             behovId,
             JsonMessage.newMessage(
@@ -90,7 +89,6 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
                     "@id" to UUID.randomUUID(),
                     "@opprettet" to LocalDateTime.now(),
                     "behov_id" to behovId,
-                    "søknad_uuid" to søknadUUID,
                     "behov_opprettet" to behov["@opprettet"].asLocalDateTime(),
                     "forventet" to forventninger,
                     "løsninger" to løsninger,
@@ -125,7 +123,6 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
     private fun loggKombinering(packet: JsonMessage) {
         withLoggingContext(
             "behovId" to packet["@behovId"].asText(),
-            "søknad_uuid" to packet["søknad_uuid"].asText()
         ) {
             val løsninger = packet["@løsning"].fieldNames().asSequence().toSet()
             val behov = packet["@behov"].map(JsonNode::asText)
@@ -143,7 +140,6 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
     private fun loggUfullstendingBehov(packet: JsonMessage, mangler: List<String>) {
         withLoggingContext(
             "behovId" to packet["@behovId"].asText(),
-            "søknad_uuid" to packet["søknad_uuid"].asText()
         ) {
             listOf(log, sikkerLogg).forEach { logger ->
                 logger.error {

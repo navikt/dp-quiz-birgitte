@@ -27,7 +27,6 @@ internal class FlatlandTest {
             assertEquals("behov_uten_fullstendig_løsning", field(0, "@event_name").asText())
             assertNotNull(field(0, "@opprettet").asLocalDateTime())
             assertNotNull(field(0, "behov_id").asText())
-            assertNotNull(field(0, "søknad_uuid").asText())
             assertTrue(field(0, "forventet").asIterable().toList().isNotEmpty())
             assertTrue(field(0, "mangler").asIterable().toList().isNotEmpty())
             assertNotNull(field(0, "behov_opprettet").asLocalDateTime())
