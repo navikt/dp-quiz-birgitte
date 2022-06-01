@@ -40,7 +40,7 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
     init {
         River(rapidsConnection).apply {
             validate { it.forbid("@final") }
-            validate { it.requireKey("@id", "@behov", "fakta") }
+            validate { it.requireKey("@behovId", "@behov", "fakta") }
             validate { it.require("@opprettet", JsonNode::asLocalDateTime) }
             validate { it.interestedIn("søknad_uuid", "@løsning") }
         }.register(this)
@@ -66,7 +66,7 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-        val id = packet["@id"].asText()
+        val id = packet["@behovId"].asText()
         when (behovUtenLøsning[id]) {
             null -> behovUtenLøsning[id] = (context to packet)
             else -> behovUtenLøsning[id]?.also { it.second.kombinerLøsninger(packet) }
@@ -80,7 +80,7 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
         val løsninger = behov.løsninger()
         val mangler = forventninger.minus(løsninger)
         loggUfullstendingBehov(behov, mangler)
-        val behovId = behov["@id"].asText()
+        val behovId = behov["@behovId"].asText()
         val søknadUUID = behov["søknad_uuid"].asText()
         context.publish(
             behovId,
@@ -124,7 +124,7 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
 
     private fun loggKombinering(packet: JsonMessage) {
         withLoggingContext(
-            "behovId" to packet["@id"].asText(),
+            "behovId" to packet["@behovId"].asText(),
             "søknad_uuid" to packet["søknad_uuid"].asText()
         ) {
             val løsninger = packet["@løsning"].fieldNames().asSequence().toSet()
@@ -142,7 +142,7 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
 
     private fun loggUfullstendingBehov(packet: JsonMessage, mangler: List<String>) {
         withLoggingContext(
-            "behovId" to packet["@id"].asText(),
+            "behovId" to packet["@behovId"].asText(),
             "søknad_uuid" to packet["søknad_uuid"].asText()
         ) {
             listOf(log, sikkerLogg).forEach { logger ->

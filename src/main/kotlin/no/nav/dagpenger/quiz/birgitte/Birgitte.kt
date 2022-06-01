@@ -17,7 +17,7 @@ class Birgitte(rapidsConnection: RapidsConnection) : River.PacketListener {
     init {
         River(rapidsConnection).apply {
             validate { it.forbid("@final") }
-            validate { it.requireKey("@id", "@behov", "@løsning", "fakta") }
+            validate { it.requireKey("@behovId", "@behov", "@løsning", "fakta") }
             validate { it.require("@opprettet", JsonNode::asLocalDateTime) }
             validate { it.interestedIn("søknad_uuid") }
         }.register(this)
@@ -56,7 +56,7 @@ class Birgitte(rapidsConnection: RapidsConnection) : River.PacketListener {
 
     private fun loggBehov(packet: JsonMessage) {
         withLoggingContext(
-            "behovId" to packet["@id"].asText(),
+            "behovId" to packet["@behovId"].asText(),
             "søknad_uuid" to packet["søknad_uuid"].asText()
         ) {
             listOf(log, sikkerLogg).forEach { logger ->
