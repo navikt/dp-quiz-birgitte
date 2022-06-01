@@ -10,7 +10,6 @@ import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.asLocalDateTime
@@ -29,7 +28,7 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
     River.PacketListener {
     private companion object {
         val log = KotlinLogging.logger { }
-        val sikkerLogg = KotlinLogging.logger("tjenestekall.flatland")
+        val sikkerLogg = KotlinLogging.logger("tjenestekall")
         val objectMapper = jacksonObjectMapper()
             .registerModule(JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
@@ -72,10 +71,6 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
             null -> behovUtenLøsning[id] = (context to packet)
             else -> behovUtenLøsning[id]?.also { it.second.kombinerLøsninger(packet) }
         }
-    }
-
-    override fun onError(problems: MessageProblems, context: MessageContext) {
-        sikkerLogg.info { "onError ${problems.toExtendedReport()}" }
     }
 
     private fun sendUfullstendigBehovEvent(pair: Pair<MessageContext, JsonMessage>) {
