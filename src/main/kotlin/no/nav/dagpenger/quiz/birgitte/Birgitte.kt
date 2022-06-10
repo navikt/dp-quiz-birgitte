@@ -29,41 +29,46 @@ class Birgitte(rapidsConnection: RapidsConnection) : River.PacketListener {
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-        loggBehov(packet)
-        packet["@løsning"].fields().forEach { (behov, løsning) ->
-            val faktum = packet["fakta"].find { faktum -> faktum["behov"].asText() == behov } as ObjectNode
-            when (faktum["type"].asText()) {
-                "generator" -> {
-                    val svar = jacksonObjectMapper().createArrayNode()
-                    løsning.forEach { enLøsning ->
-                        faktum["templates"].deepCopy<ArrayNode>().also { templates ->
-                            enLøsning.fields().forEach { (key, value) ->
-                                val matchendeFaktum = templates.find { it["navn"].asText() == key } as ObjectNode
-                                matchendeFaktum.set<JsonNode>("svar", value)
-                            }
-                        }.also {
-                            svar.add(it)
-                        }
-                    }
-                    faktum.set<JsonNode>("svar", svar)
-                }
-                else -> faktum.set<JsonNode>("svar", løsning)
-            }
-        }
-        packet["@final"] = true
-        context.publish(packet.toJson())
-    }
-
-    private fun loggBehov(packet: JsonMessage) {
         withLoggingContext(
             "behovId" to packet["@behovId"].asText(),
             "søknad_uuid" to packet["søknad_uuid"].asText()
         ) {
-            listOf(log, sikkerLogg).forEach { logger ->
-                logger.info {
-                    val løsninger = packet["@løsning"].fieldNames().asSequence().joinToString(", ")
-                    "Mottok løsning for $løsninger for søknad ${packet["søknad_uuid"].asText()}"
+            loggBehov(packet)
+            packet["@løsning"].fields().forEach { (behov, løsning) ->
+                val faktum = packet["fakta"].find { faktum -> faktum["behov"].asText() == behov } as ObjectNode
+                when (faktum["type"].asText()) {
+                    "generator" -> {
+                        try {
+                            val svar = jacksonObjectMapper().createArrayNode()
+                            løsning.forEach { enLøsning ->
+                                faktum["templates"].deepCopy<ArrayNode>().also { templates ->
+                                    enLøsning.fields().forEach { (key, value) ->
+                                        val matchendeFaktum =
+                                            templates.find { it["navn"].asText() == key } as ObjectNode
+                                        matchendeFaktum.set<JsonNode>("svar", value)
+                                    }
+                                }.also {
+                                    svar.add(it)
+                                }
+                            }
+                            faktum.set<JsonNode>("svar", svar)
+                        } catch (e: NullPointerException) {
+                            sikkerLogg.error(e) { "Kunne ikke generere svar for generator faktum. Pakka ser sånn ut: ${packet.toJson()}" }
+                        }
+                    }
+                    else -> faktum.set<JsonNode>("svar", løsning)
                 }
+            }
+            packet["@final"] = true
+            context.publish(packet.toJson())
+        }
+    }
+
+    private fun loggBehov(packet: JsonMessage) {
+        listOf(log, sikkerLogg).forEach { logger ->
+            logger.info {
+                val løsninger = packet["@løsning"].fieldNames().asSequence().joinToString(", ")
+                "Mottok løsning for $løsninger for søknad ${packet["søknad_uuid"].asText()}"
             }
         }
     }
