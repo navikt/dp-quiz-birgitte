@@ -9,6 +9,7 @@ on:
 
 env:
   IMAGE: ghcr.io/${{ github.repository }}/dp-quiz-birgitte:${{ github.sha }}
+  LATEST_IMAGE: ghcr.io/${{ github.repository }}/dp-quiz-birgitte:latest
 
 jobs:
   build:
@@ -52,7 +53,7 @@ jobs:
         with:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
-          tags: ${{ env.IMAGE }}
+          tags: ${{ env.IMAGE }},${{ env.LATEST_IMAGE }}
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
