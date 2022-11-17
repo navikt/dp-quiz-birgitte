@@ -42,7 +42,7 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
             validate { it.forbid("@final") }
             validate { it.requireKey("@behovId", "@behov") }
             validate { it.require("@opprettet", JsonNode::asLocalDateTime) }
-            validate { it.interestedIn("@løsning") }
+            validate { it.interestedIn("@løsning", "søknad_uuid") }
         }.register(this)
 
         fixedRateTimer(initialDelay = delay.initalDelay(), period = delay.period()) {
@@ -74,7 +74,6 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
     }
 
     private fun sendUfullstendigBehovEvent(pair: Pair<MessageContext, JsonMessage>) {
-
         val (context, behov) = pair
         val forventninger = behov.forventninger()
         val løsninger = behov.løsninger()
@@ -106,7 +105,6 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
     private fun JsonMessage.løsninger(): List<String> = this["@løsning"].fieldNames().asSequence().toList()
 
     private fun JsonMessage.kombinerLøsninger(packet: JsonMessage) {
-
         if (this["@løsning"].isMissingOrNull()) {
             this["@løsning"] = objectMapper.createObjectNode()
         }
@@ -122,7 +120,10 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
 
     private fun loggKombinering(packet: JsonMessage) {
         withLoggingContext(
-            "behovId" to packet["@behovId"].asText(),
+            mapOf(
+                "behovId" to packet["@behovId"].asText(),
+                "søknadId" to packet.søknadUUID()
+            )
         ) {
             val løsninger = packet["@løsning"].fieldNames().asSequence().toSet()
             val behov = packet["@behov"].map(JsonNode::asText)
@@ -139,7 +140,10 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
 
     private fun loggUfullstendingBehov(packet: JsonMessage, mangler: List<String>) {
         withLoggingContext(
-            "behovId" to packet["@behovId"].asText(),
+            mapOf(
+                "behovId" to packet["@behovId"].asText(),
+                "søknadId" to packet.søknadUUID()
+            )
         ) {
             listOf(log, sikkerLogg).forEach { logger ->
                 logger.error {
@@ -149,3 +153,5 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
         }
     }
 }
+
+private fun JsonMessage.søknadUUID(): String = this["søknad_uuid"].textValue() ?: "mangler"
