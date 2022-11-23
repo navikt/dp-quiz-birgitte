@@ -37,6 +37,6 @@ tasks {
     }
 
     withType<KotlinCompile>().all {
-        kotlinOptions.jvmTarget = JavaVersion.VERSION_14.toString()
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
     }
 }
