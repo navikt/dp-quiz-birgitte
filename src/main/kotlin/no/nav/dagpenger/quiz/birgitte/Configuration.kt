@@ -12,7 +12,7 @@ internal object Configuration {
             "KAFKA_RAPID_TOPIC" to "teamdagpenger.rapid.v1",
             "KAFKA_RESET_POLICY" to "latest",
             "HTTP_PORT" to "8080",
-        )
+        ),
     )
     private val properties = systemProperties() overriding EnvironmentVariables() overriding defaultProperties
 

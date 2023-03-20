@@ -31,7 +31,7 @@ class Birgitte(rapidsConnection: RapidsConnection) : River.PacketListener {
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         withLoggingContext(
             "behovId" to packet["@behovId"].asText(),
-            "søknad_uuid" to packet["søknad_uuid"].asText()
+            "søknad_uuid" to packet["søknad_uuid"].asText(),
         ) {
             loggBehov(packet)
             packet["@løsning"].fields().forEach { (behov, løsning) ->

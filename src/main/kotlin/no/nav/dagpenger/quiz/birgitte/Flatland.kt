@@ -92,9 +92,9 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
                     "forventet" to forventninger,
                     "løsninger" to løsninger,
                     "mangler" to mangler,
-                    "ufullstendig_behov" to behov.toJson()
-                )
-            ).toJson()
+                    "ufullstendig_behov" to behov.toJson(),
+                ),
+            ).toJson(),
         )
     }
 
@@ -122,8 +122,8 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
         withLoggingContext(
             mapOf(
                 "behovId" to packet["@behovId"].asText(),
-                "søknadId" to packet.søknadUUID()
-            )
+                "søknadId" to packet.søknadUUID(),
+            ),
         ) {
             val løsninger = packet["@løsning"].fieldNames().asSequence().toSet()
             val behov = packet["@behov"].map(JsonNode::asText)
@@ -142,8 +142,8 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
         withLoggingContext(
             mapOf(
                 "behovId" to packet["@behovId"].asText(),
-                "søknadId" to packet.søknadUUID()
-            )
+                "søknadId" to packet.søknadUUID(),
+            ),
         ) {
             listOf(log, sikkerLogg).forEach { logger ->
                 logger.error {
