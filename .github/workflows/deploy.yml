@@ -44,12 +44,14 @@ jobs:
     permissions:
       id-token: write
     steps:
-      -   uses: actions/checkout@v4
-      -   uses: nais/deploy/actions/deploy@v2
-          env:
-            CLUSTER: dev-gcp
-            RESOURCE: nais/nais.yaml
-            VARS: nais/dev/vars.yaml
+      - uses: actions/checkout@v4
+      - uses: nais/deploy/actions/deploy@v2
+        env:
+          CLUSTER: dev-gcp
+          RESOURCE: .nais/nais.yaml
+          VAR: image=${{ needs.build.outputs.image }}
+          VARS: .nais/vars-dev.yaml
+          PRINT_PAYLOAD: true
 
   deploy-prod:
     name: Deploy to Production
