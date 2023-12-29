@@ -1,7 +1,14 @@
 buildscript { repositories { mavenCentral() } }
 
 plugins {
-    id("dagpenger.rapid-and-rivers")
+    id("common")
+    application
+}
+
+dependencies {
+    implementation(libs.rapids.and.rivers)
+    implementation(libs.konfig)
+    implementation(libs.kotlin.logging)
 }
 
 application {

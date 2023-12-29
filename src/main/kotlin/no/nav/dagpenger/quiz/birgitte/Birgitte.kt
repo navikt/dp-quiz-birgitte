@@ -13,7 +13,6 @@ import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.asLocalDateTime
 
 class Birgitte(rapidsConnection: RapidsConnection) : River.PacketListener {
-
     init {
         River(rapidsConnection).apply {
             validate { it.forbid("@final") }
@@ -28,7 +27,10 @@ class Birgitte(rapidsConnection: RapidsConnection) : River.PacketListener {
         private val sikkerLogg = KotlinLogging.logger("tjenestekall")
     }
 
-    override fun onPacket(packet: JsonMessage, context: MessageContext) {
+    override fun onPacket(
+        packet: JsonMessage,
+        context: MessageContext,
+    ) {
         withLoggingContext(
             "behovId" to packet["@behovId"].asText(),
             "søknadId" to packet["søknad_uuid"].asText(),

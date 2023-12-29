@@ -21,6 +21,7 @@ import kotlin.concurrent.fixedRateTimer
 
 internal class Delay(private val initalDelay: Long, private val period: Long, private val timeUnit: TimeUnit) {
     fun initalDelay() = timeUnit.toMillis(initalDelay)
+
     fun period() = timeUnit.toMillis(period)
 }
 
@@ -29,10 +30,11 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
     private companion object {
         val log = KotlinLogging.logger { }
         val sikkerLogg = KotlinLogging.logger("tjenestekall")
-        val objectMapper = jacksonObjectMapper()
-            .registerModule(JavaTimeModule())
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        val objectMapper =
+            jacksonObjectMapper()
+                .registerModule(JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
     }
 
     private val behovUtenLøsning = mutableMapOf<String, Pair<MessageContext, JsonMessage>>()
@@ -65,7 +67,10 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
         }
     }
 
-    override fun onPacket(packet: JsonMessage, context: MessageContext) {
+    override fun onPacket(
+        packet: JsonMessage,
+        context: MessageContext,
+    ) {
         val id = packet["@behovId"].asText()
         when (behovUtenLøsning[id]) {
             null -> behovUtenLøsning[id] = (context to packet)
@@ -138,7 +143,10 @@ internal class Flatland(rapidsConnection: RapidsConnection, delay: Delay = Delay
         }
     }
 
-    private fun loggUfullstendingBehov(packet: JsonMessage, mangler: List<String>) {
+    private fun loggUfullstendingBehov(
+        packet: JsonMessage,
+        mangler: List<String>,
+    ) {
         withLoggingContext(
             mapOf(
                 "behovId" to packet["@behovId"].asText(),

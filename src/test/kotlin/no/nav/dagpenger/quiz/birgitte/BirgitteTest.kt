@@ -13,9 +13,10 @@ internal class BirgitteTest {
 
     @BeforeEach
     fun setup() {
-        rapid = TestRapid().apply {
-            Birgitte(rapidsConnection = this)
-        }
+        rapid =
+            TestRapid().apply {
+                Birgitte(rapidsConnection = this)
+            }
     }
 
     @Test
@@ -71,110 +72,111 @@ internal class BirgitteTest {
 @Language("json")
 private val løstBehovJson =
     """
-{
-  "@event_name": "faktum_svar",
-  "@opprettet": "2020-11-18T11:04:32.867824",
-  "@id": "930e2beb-d394-4024-b713-dbeb6ad3d4bf",
-  "@behovId": "930e2beb-d394-4024-b713-dbeb6ad3d4bf",
-  "fnr": "123",
-  "søknad_uuid": "41621ac0-f5ee-4cce-b1f5-88a79f25f1a5",
-  "fakta": [ 
     {
-      "id": "666",
-      "behov": "Registreringsdato",
-      "type": "localdate"
-    },
-    {
-      "id": "777",
-      "behov": "Fødselsdato",
-      "type": "localdate"
+      "@event_name": "faktum_svar",
+      "@opprettet": "2020-11-18T11:04:32.867824",
+      "@id": "930e2beb-d394-4024-b713-dbeb6ad3d4bf",
+      "@behovId": "930e2beb-d394-4024-b713-dbeb6ad3d4bf",
+      "fnr": "123",
+      "søknad_uuid": "41621ac0-f5ee-4cce-b1f5-88a79f25f1a5",
+      "fakta": [ 
+        {
+          "id": "666",
+          "behov": "Registreringsdato",
+          "type": "localdate"
+        },
+        {
+          "id": "777",
+          "behov": "Fødselsdato",
+          "type": "localdate"
+        }
+      ],
+      "@behov": [
+        "Registreringsdato",
+        "Fødselsdato"
+      ],
+      "@løsning": {
+        "Registreringsdato": "2020-11-01",
+        "Fødselsdato": "1998-11-01"
+      },
+      "Søknadstidspunkt": "2020-11-09"
     }
-  ],
-  "@behov": [
-    "Registreringsdato",
-    "Fødselsdato"
-  ],
-  "@løsning": {
-    "Registreringsdato": "2020-11-01",
-    "Fødselsdato": "1998-11-01"
-  },
-  "Søknadstidspunkt": "2020-11-09"
-}
     """.trimIndent()
 
 @Language("json")
 private val løstBehovMedKompleksLøsningJson =
     """
-{
-  "@event_name": "faktum_svar",
-  "@opprettet": "2020-11-18T11:04:32.867824",
-  "@id": "930e2beb-d394-4024-b713-dbeb6ad3d4bf",
-  "@behovId": "930e2beb-d394-4024-b713-dbeb6ad3d4bf",
-  "fnr": "123",
-  "søknad_uuid": "41621ac0-f5ee-4cce-b1f5-88a79f25f1a5",
-  "fakta": [ 
     {
-       "id": "10",
-      "behov": "komplekst",
-      "type": "localdate"
+      "@event_name": "faktum_svar",
+      "@opprettet": "2020-11-18T11:04:32.867824",
+      "@id": "930e2beb-d394-4024-b713-dbeb6ad3d4bf",
+      "@behovId": "930e2beb-d394-4024-b713-dbeb6ad3d4bf",
+      "fnr": "123",
+      "søknad_uuid": "41621ac0-f5ee-4cce-b1f5-88a79f25f1a5",
+      "fakta": [ 
+        {
+           "id": "10",
+          "behov": "komplekst",
+          "type": "localdate"
+        }
+      ],
+      "@behov": [
+        "komplekst"
+      ],
+      "@løsning": {
+        "komplekst": {
+          "start": "2020-01-01",
+          "slutt": "2020-12-12"
+        }
+      },
+      "Søknadstidspunkt": "2020-11-09"
     }
-  ],
-  "@behov": [
-    "komplekst"
-  ],
-  "@løsning": {
-    "komplekst": {
-      "start": "2020-01-01",
-      "slutt": "2020-12-12"
-    }
-  },
-  "Søknadstidspunkt": "2020-11-09"
-}
     """.trimIndent()
 
 @Language("json")
 private val løstBehovMedGeneratorFaktum =
-    """{
-  "@event_name": "faktum_svar",
-  "@opprettet": "2020-11-18T11:04:32.867824",
-  "@id": "930e2beb-d394-4024-b713-dbeb6ad3d4bf",
-  "@behovId": "930e2beb-d394-4024-b713-dbeb6ad3d4bf",
-  "fnr": "123",
-  "søknad_uuid": "41621ac0-f5ee-4cce-b1f5-88a79f25f1a5",
-  "fakta": [
+    """
     {
-      "id": "10",
-      "behov": "Registreringsperioder",
-      "type": "generator",
-      "templates": [
+      "@event_name": "faktum_svar",
+      "@opprettet": "2020-11-18T11:04:32.867824",
+      "@id": "930e2beb-d394-4024-b713-dbeb6ad3d4bf",
+      "@behovId": "930e2beb-d394-4024-b713-dbeb6ad3d4bf",
+      "fnr": "123",
+      "søknad_uuid": "41621ac0-f5ee-4cce-b1f5-88a79f25f1a5",
+      "fakta": [
         {
-          "id": "11",
-          "navn": "fom",
-          "type": "localdate"
-        },
-        {
-          "id": "12",
-          "navn": "tom",
-          "type": "localdate"
+          "id": "10",
+          "behov": "Registreringsperioder",
+          "type": "generator",
+          "templates": [
+            {
+              "id": "11",
+              "navn": "fom",
+              "type": "localdate"
+            },
+            {
+              "id": "12",
+              "navn": "tom",
+              "type": "localdate"
+            }
+          ]
         }
-      ]
-    }
-  ],
-  "@behov": [
-    "Registreringsperioder"
-  ],
-  "Søknadstidspunkt": "2020-11-09",
-  "@løsning": {
-    "Registreringsperioder": [
-      {
-        "fom": "2020-01-01",
-        "tom": "2020-01-08"
-      },
-      {
-        "fom": "2020-01-09",
-        "tom": "2020-01-16"
+      ],
+      "@behov": [
+        "Registreringsperioder"
+      ],
+      "Søknadstidspunkt": "2020-11-09",
+      "@løsning": {
+        "Registreringsperioder": [
+          {
+            "fom": "2020-01-01",
+            "tom": "2020-01-08"
+          },
+          {
+            "fom": "2020-01-09",
+            "tom": "2020-01-16"
+          }
+        ]
       }
-    ]
-  }
-}
+    }
     """.trimIndent()
