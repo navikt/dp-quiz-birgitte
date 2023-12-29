@@ -18,7 +18,7 @@ jobs:
         with:
           java-version: 17
           distribution: temurin
-      - uses: gradle/gradle-build-action@v2.8.0
+      - uses: gradle/gradle-build-action@v2.11.1
         with:
           arguments: --configuration-cache build installDist
 
