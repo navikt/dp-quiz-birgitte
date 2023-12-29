@@ -18,27 +18,25 @@ jobs:
         with:
           java-version: 17
           distribution: temurin
+
       - uses: gradle/gradle-build-action@v2.11.1
         with:
           arguments: --configuration-cache build installDist
 
-      - uses: nais/docker-build-push@v0
-        name: docker-build-push
+      - name: docker-build-push
+        uses: nais/docker-build-push@v0
         id: docker-build-push
         with:
           team: teamdagpenger
-          tag: latest # optional tag added
-          push_image: true # optional, default true
-          dockerfile: Dockerfile # optional, default Dockerfile
-          docker_context: . # optional, default .
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-          project_id:  ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+
     outputs:
       image: ${{ steps.docker-build-push.outputs.image }}
 
   deploy-dev:
     name: Deploy to dev
-    needs: [ build ]
+    needs: build
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
@@ -49,14 +47,13 @@ jobs:
         env:
           CLUSTER: dev-gcp
           RESOURCE: .nais/nais.yaml
-          VAR: image=${{ needs.build.outputs.image }}
           VARS: .nais/vars-dev.yaml
+          VAR: image=${{ needs.build.outputs.image }}
           PRINT_PAYLOAD: true
 
   deploy-prod:
-    name: Deploy to Production
-    needs: [ build ]
-    if: github.ref == 'refs/heads/main'
+    name: Deploy to prod
+    needs: [ build, deploy-dev ]
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -66,6 +63,6 @@ jobs:
         env:
           CLUSTER: prod-gcp
           RESOURCE: .nais/nais.yaml
-          VAR: image=${{ needs.build.outputs.image }}
           VARS: .nais/vars-prod.yaml
+          VAR: image=${{ needs.build.outputs.image }}
           PRINT_PAYLOAD: true
