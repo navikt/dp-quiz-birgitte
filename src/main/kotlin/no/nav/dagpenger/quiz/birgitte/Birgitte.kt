@@ -15,7 +15,7 @@ import no.nav.helse.rapids_rivers.asLocalDateTime
 class Birgitte(rapidsConnection: RapidsConnection) : River.PacketListener {
     init {
         River(rapidsConnection).apply {
-            validate { it.forbid("@final") }
+            validate { it.forbid("@final", "@opplysningsbehov") }
             validate { it.requireKey("@behovId", "@behov", "@løsning", "fakta") }
             validate { it.require("@opprettet", JsonNode::asLocalDateTime) }
             validate { it.interestedIn("søknad_uuid") }
@@ -58,6 +58,7 @@ class Birgitte(rapidsConnection: RapidsConnection) : River.PacketListener {
                             sikkerLogg.error(e) { "Kunne ikke generere svar for generator faktum. Pakka ser sånn ut: ${packet.toJson()}" }
                         }
                     }
+
                     else -> faktum.set<JsonNode>("svar", løsning)
                 }
             }
