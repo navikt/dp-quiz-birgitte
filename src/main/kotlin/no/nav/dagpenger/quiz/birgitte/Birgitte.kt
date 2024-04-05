@@ -41,23 +41,19 @@ class Birgitte(rapidsConnection: RapidsConnection) : River.PacketListener {
                 val faktum = packet["fakta"].find { faktum -> faktum["behov"].asText() == behov } as ObjectNode
                 when (faktum["type"].asText()) {
                     "generator" -> {
-                        try {
-                            val svar = jacksonObjectMapper().createArrayNode()
-                            løsning.forEach { enLøsning ->
-                                faktum["templates"].deepCopy<ArrayNode>().also { templates ->
-                                    enLøsning.fields().forEach { (key, value) ->
-                                        val matchendeFaktum =
-                                            templates.find { it["navn"].asText() == key } as ObjectNode
-                                        matchendeFaktum.set<JsonNode>("svar", value)
-                                    }
-                                }.also {
-                                    svar.add(it)
+                        val svar = jacksonObjectMapper().createArrayNode()
+                        løsning.forEach { enLøsning ->
+                            faktum["templates"].deepCopy<ArrayNode>().also { templates ->
+                                enLøsning.fields().forEach { (key, value) ->
+                                    val matchendeFaktum =
+                                        templates.find { it["navn"].asText() == key } as ObjectNode
+                                    matchendeFaktum.set<JsonNode>("svar", value)
                                 }
+                            }.also {
+                                svar.add(it)
                             }
-                            faktum.set<JsonNode>("svar", svar)
-                        } catch (e: NullPointerException) {
-                            sikkerLogg.error(e) { "Kunne ikke generere svar for generator faktum. Pakka ser sånn ut: ${packet.toJson()}" }
                         }
+                        faktum.set<JsonNode>("svar", svar)
                     }
 
                     else -> faktum.set<JsonNode>("svar", løsning)
