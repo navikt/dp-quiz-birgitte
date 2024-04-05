@@ -15,8 +15,8 @@ import no.nav.helse.rapids_rivers.asLocalDateTime
 class Birgitte(rapidsConnection: RapidsConnection) : River.PacketListener {
     init {
         River(rapidsConnection).apply {
+            validate { it.requireValue("@event_name", "faktum_svar") }
             validate { it.forbid("@final") }
-            validate { it.requireValue("@behovEier", "dp-quiz") }
             validate { it.requireKey("@behovId", "@behov", "@løsning", "fakta") }
             validate { it.require("@opprettet", JsonNode::asLocalDateTime) }
             validate { it.interestedIn("søknad_uuid") }
