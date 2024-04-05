@@ -24,8 +24,8 @@ class Birgitte(rapidsConnection: RapidsConnection) : River.PacketListener {
     }
 
     companion object {
-        private val log = KotlinLogging.logger { }
-        private val sikkerLogg = KotlinLogging.logger("tjenestekall")
+        private val logger = KotlinLogging.logger { }
+        private val sikkerLogg = KotlinLogging.logger("tjenestekall.Birgitte")
     }
 
     override fun onPacket(
@@ -36,7 +36,8 @@ class Birgitte(rapidsConnection: RapidsConnection) : River.PacketListener {
             "behovId" to packet["@behovId"].asText(),
             "søknadId" to packet["søknad_uuid"].asText(),
         ) {
-            loggBehov(packet)
+            val løsninger = packet["@løsning"].fieldNames().asSequence().joinToString(", ")
+            logger.info("Mottok løsning for $løsninger")
             packet["@løsning"].fields().forEach { (behov, løsning) ->
                 val faktum = packet["fakta"].find { faktum -> faktum["behov"].asText() == behov } as ObjectNode
                 when (faktum["type"].asText()) {
@@ -56,7 +57,10 @@ class Birgitte(rapidsConnection: RapidsConnection) : River.PacketListener {
                             }
                             faktum.set<JsonNode>("svar", svar)
                         } catch (e: NullPointerException) {
-                            sikkerLogg.error(e) { "Kunne ikke generere svar for generator faktum. Pakka ser sånn ut: ${packet.toJson()}" }
+                            logger.error { "Kunne ikke generere svar for generator faktum for $behov. (se tjenestekall for pakka)" }
+                            sikkerLogg.error(
+                                e,
+                            ) { "Kunne ikke generere svar for generator faktum for $behov. Pakka ser sånn ut: ${packet.toJson()}" }
                         }
                     }
 
@@ -65,15 +69,6 @@ class Birgitte(rapidsConnection: RapidsConnection) : River.PacketListener {
             }
             packet["@final"] = true
             context.publish(packet.toJson())
-        }
-    }
-
-    private fun loggBehov(packet: JsonMessage) {
-        listOf(log, sikkerLogg).forEach { logger ->
-            logger.info {
-                val løsninger = packet["@løsning"].fieldNames().asSequence().joinToString(", ")
-                "Mottok løsning for $løsninger for søknad ${packet["søknad_uuid"].asText()}"
-            }
         }
     }
 }
