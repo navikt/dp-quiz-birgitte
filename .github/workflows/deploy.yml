@@ -19,7 +19,7 @@ jobs:
           java-version: 21
           distribution: temurin
 
-      - uses: gradle/gradle-build-action@v3.2.1
+      - uses: gradle/gradle-build-action@v3.3.0
         with:
           arguments: --configuration-cache build
 
