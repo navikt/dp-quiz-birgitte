@@ -9,6 +9,7 @@ dependencies {
     implementation(libs.rapids.and.rivers)
     implementation(libs.konfig)
     implementation(libs.kotlin.logging)
+    testImplementation(libs.rapids.and.rivers.test)
 }
 
 application {
