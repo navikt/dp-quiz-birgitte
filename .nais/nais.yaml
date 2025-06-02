@@ -32,3 +32,11 @@ spec:
     enabled: true
   kafka:
     pool: "{{ kafka_pool }}"
+  observability:
+    logging:
+      destinations:
+        - id: loki
+        - id: elastic
+    autoInstrumentation:
+      enabled: true
+      runtime: java
