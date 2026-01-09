@@ -41,6 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
+    environment: dev-gcp
     steps:
       - uses: actions/checkout@v6
       - uses: nais/deploy/actions/deploy@v2
@@ -57,6 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
+    environment: prod-gcp
     steps:
       - uses: actions/checkout@v6
       - uses: nais/deploy/actions/deploy@v2
