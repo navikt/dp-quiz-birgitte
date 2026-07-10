@@ -1,3 +1,6 @@
+## Denne applikasjonen er arkivert
+**Den ble brukt ifm. gammel dagpengesøknad som nå er erstattet**
+
 # dp-quiz-birgitte
 
 ## Komme i gang
